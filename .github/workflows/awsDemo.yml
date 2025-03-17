@@ -1,0 +1,22 @@
+name: AWSCodeBuild Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  GH-To-AWS-CodeBuild-Integratio-Test:
+    runs-on:
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+      - buildspec-override:true
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3      
+      - name: Build Code
+        run: |
+          id
+          sudo -su builder; id ; echo $HOME
+          
+      - name: GithubVariable
+        run: |
+          echo ${{ github.workspace }}
+          echo $GITHUB_WORKSPACE
