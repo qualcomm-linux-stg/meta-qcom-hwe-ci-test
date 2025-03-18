@@ -15,6 +15,7 @@ jobs:
         run: |
           id
           sudo -su builder; id ; echo $HOME
+          find . /efs
           
       - name: GithubVariable
         run: |
