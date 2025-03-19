@@ -2,11 +2,13 @@ name: AWSCodeBuild Demo
 
 on:
   workflow_dispatch:
-
+env:
+  SELF_HOSTED_RUNNER: codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
 jobs:
   GH-To-AWS-CodeBuild-Integratio-Test:
     runs-on:
-      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+      #- codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+      - $SELF_HOSTED_RUNNER
       - buildspec-override:true
     steps:
       - name: Checkout Code
