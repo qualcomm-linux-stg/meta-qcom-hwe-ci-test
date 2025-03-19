@@ -1,0 +1,112 @@
+name: AWS-Build Yocto
+
+on:
+  workflow_call:
+    outputs:
+      artifacts_url:
+        description: "URL to retrieve build artifacts"
+        value: ${{ jobs.create-output.outputs.url }}
+
+env:
+  CACHE_DIR: $GITHUB_WORKSPACE/gh-runners/quic-yocto
+  KAS_REPO_REF_DIR: $GITHUB_WORKSPACE/gh-runners/quic-yocto/kas-mirrors
+
+jobs:
+  kas-lock:
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
+    runs-on: 
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run kas lock
+        run: |
+          kas dump --update --lock --inplace ci/base.yml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kas-lock
+          path: ci/*.lock.yml
+
+  yocto-check-layer:
+    needs: kas-lock
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
+    runs-on: 
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: kas-lock
+          path: ci/
+
+      - name: Run yocto-check-layer
+        run: |
+          chown -R builder ${CACHE_DIR}
+          sudo u builder ci/yocto-check-layer.sh
+
+  yocto-patchreview:
+    needs: kas-lock
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
+    runs-on: 
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: kas-lock
+          path: ci/
+
+      - name: Run Yocto patchreview
+        run: |
+          ci/yocto-patchreview.sh
+
+  compile:
+    needs: kas-lock
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
+    strategy:
+      fail-fast: true
+      matrix:
+        machine:
+          - qcm6490-idp
+          - qcs6490-rb3gen2-core-kit
+          - sa8775p-ride-sx
+    runs-on: 
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+    name: ${{ matrix.machine }}/poky/systemd
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: kas-lock
+          path: ci/
+
+      - name: Kas build
+        run: |
+          export DL_DIR=${CACHE_DIR}/downloads
+          export SSTATE_DIR=${CACHE_DIR}/sstate-cache
+          export KAS_WORK_DIR=$PWD/../kas
+          mkdir $KAS_WORK_DIR
+          chown -R builder ${CACHE_DIR}
+          sudo u builder kas build ci/mirror.yml:ci/${{ matrix.machine }}.yml
+
+      - name: Publish image
+        run: |
+          build_dir=${CACHE_DIR}/builds/${GITHUB_RUN_ID}
+          mkdir -p $build_dir
+          img_dir=$build_dir/${{ matrix.machine }}
+          [ -d $img_dir ] && rm -rf $img_dir
+          mv ../kas/build/tmp/deploy/images/${{matrix.machine}} $img_dir
+          
+          # Instruct our file server to make these files available for download
