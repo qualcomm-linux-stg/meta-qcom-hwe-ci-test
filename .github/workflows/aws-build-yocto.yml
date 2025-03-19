@@ -1,4 +1,4 @@
-name: Build Yocto
+name: AWS-Build Yocto
 
 on:
   workflow_call:
@@ -13,7 +13,7 @@ env:
 
 jobs:
   kas-lock:
-    if: github.repository == 'qualcomm-linux/meta-qcom-hwe'
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
     runs-on: 
       - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -32,7 +32,7 @@ jobs:
 
   yocto-check-layer:
     needs: kas-lock
-    if: github.repository == 'qualcomm-linux/meta-qcom-hwe'
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
     runs-on: 
       - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -52,7 +52,7 @@ jobs:
 
   yocto-patchreview:
     needs: kas-lock
-    if: github.repository == 'qualcomm-linux/meta-qcom-hwe'
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
     runs-on: 
       - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -71,7 +71,7 @@ jobs:
 
   compile:
     needs: kas-lock
-    if: github.repository == 'qualcomm-linux/meta-qcom-hwe'
+    if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
     strategy:
       fail-fast: true
       matrix:
