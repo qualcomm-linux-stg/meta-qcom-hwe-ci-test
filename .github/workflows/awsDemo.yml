@@ -6,9 +6,8 @@ env:
   SELF_HOSTED_RUNNER: codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
 jobs:
   GH-To-AWS-CodeBuild-Integratio-Test:
-    runs-on:
-      #- codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
-      - $SELF_HOSTED_RUNNER
+    runs-on: 
+      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
       - buildspec-override:true
     steps:
       - name: Checkout Code
