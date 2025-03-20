@@ -49,7 +49,7 @@ jobs:
       - name: Run yocto-check-layer
         run: |
           chown -R builder ${CACHE_DIR} ./
-          sudo u builder ci/yocto-check-layer.sh
+          sudo -u builder ci/yocto-check-layer.sh
 
   yocto-patchreview:
     needs: kas-lock
@@ -100,7 +100,7 @@ jobs:
           export KAS_WORK_DIR=$PWD/../kas
           mkdir $KAS_WORK_DIR
           chown -R builder ${CACHE_DIR} ./
-          sudo u builder kas build ci/mirror.yml:ci/${{ matrix.machine }}.yml
+          sudo -u builder kas build ci/mirror.yml:ci/${{ matrix.machine }}.yml
 
       - name: Publish image
         run: |
