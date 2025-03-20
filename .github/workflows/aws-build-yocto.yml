@@ -68,7 +68,8 @@ jobs:
 
       - name: Run Yocto patchreview
         run: |
-          ci/yocto-patchreview.sh
+          chown -R builder ${CACHE_DIR} ./
+          sudo -u builder ci/yocto-patchreview.sh
 
   compile:
     needs: kas-lock
