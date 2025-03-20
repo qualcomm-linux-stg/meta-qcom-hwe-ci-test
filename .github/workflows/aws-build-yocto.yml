@@ -1,6 +1,7 @@
 name: AWS-Build Yocto
 
 on:
+  workflow_dispatch:
   workflow_call:
     outputs:
       artifacts_url:
@@ -23,6 +24,8 @@ jobs:
 
       - name: Run kas lock
         run: |
+          chown -R builder ${CACHE_DIR}
+          chown -R builder ${KAS_REPO_REF_DIR}
           kas dump --update --lock --inplace ci/base.yml
 
       - uses: actions/upload-artifact@v4
