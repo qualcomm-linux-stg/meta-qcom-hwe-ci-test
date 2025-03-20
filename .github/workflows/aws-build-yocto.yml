@@ -51,7 +51,6 @@ jobs:
         run: |
           chown -R builder ${CACHE_DIR} ./
           sudo -u builder ci/yocto-check-layer.sh
-
   yocto-patchreview:
     needs: kas-lock
     if: github.repository == 'qualcomm-linux-stg/meta-qcom-hwe-ci-test'
@@ -103,7 +102,6 @@ jobs:
           mkdir $KAS_WORK_DIR
           chown -R builder ${CACHE_DIR} ./
           sudo -u builder kas build ci/mirror.yml:ci/${{ matrix.machine }}.yml
-
       - name: Publish image
         run: |
           build_dir=${CACHE_DIR}/builds/${GITHUB_RUN_ID}
