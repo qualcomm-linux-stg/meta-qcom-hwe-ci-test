@@ -1,4 +1,4 @@
-name: AWSCodeBuild Demo
+name: AWSCodeBuild-Demo
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ jobs:
           sudo -su builder; id ; echo $HOME
           mkdir /efs/${GITHUB_RUN_ID}
           echo "A Sample file for Artifactory Test for ${{ github.workflow }}" > /efs/${GITHUB_RUN_ID}/${{ github.workflow }}-${{ github.run_id}}.log
-          find /efs
+          find /efs/${GITHUB_RUN_ID}
           
       - name: GithubVariable
         run: |
