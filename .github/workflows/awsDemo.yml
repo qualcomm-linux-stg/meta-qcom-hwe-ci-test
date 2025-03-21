@@ -17,6 +17,7 @@ jobs:
           id
           sudo -su builder; id ; echo $HOME
           mkdir /efs/${GITHUB_RUN_ID}
+          echo "A Sample file for Artifactory Test for ${{ github.workflow }}" > /efs/${GITHUB_RUN_ID}/${{ github.workflow }}-${{ github.run_id}}.log
           find /efs
           
       - name: GithubVariable
