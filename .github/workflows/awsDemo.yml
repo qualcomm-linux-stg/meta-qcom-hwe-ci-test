@@ -6,7 +6,7 @@ env:
 jobs:
   GH-To-AWS-CodeBuild-Integratio-Test:  
     runs-on:
-      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+      - codebuild-qualcomm-linux-stg-${{ github.run_id }}-${{ github.run_attempt }}
       - buildspec-override:true
     env:
       JOB_RUNATTEMPT: SMDEBUG-${{ github.run_attempt }}
