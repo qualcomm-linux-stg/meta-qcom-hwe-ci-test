@@ -6,7 +6,7 @@ on:
 jobs:
   GH-To-AWS-CodeBuild-Integratio-Test:
     runs-on:
-      - codebuild-QualcommLinuxStg-MetaQcom-${{ github.run_id }}-${{ github.run_attempt }}
+      - codebuild-Qualcomm-Linux-Stage-${{ github.run_id }}-${{ github.run_attempt }}
       - buildspec-override:true
     steps:
       - name: Checkout Code
